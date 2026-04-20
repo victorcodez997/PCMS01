@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1"
+    />
+    <title>Smart PCMS</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- TOAST -->
+    <div id="toast"></div>
+
+    <!-- ════════════ LOGIN ════════════ -->
+    <div id="loginPage">
+      <div class="blob blob1"></div>
+      <div class="blob blob2"></div>
+      <div class="blob blob3"></div>
+
+      <div class="loginCard">
+        <div class="loginBrand">
+          <h1>Smart PCMS</h1>
+          <p>Power Control &amp; Management System</p>
+        </div>
+
+        <div class="field">
+          <label>Username</label>
+          <input
+            id="uname"
+            type="text"
+            placeholder="e.g. PCMS"
+            autocomplete="off"
+            spellcheck="false"
+          />
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input id="pword" type="password" placeholder="Enter your password" />
+        </div>
+
+        <button class="loginBtn" onclick="doLogin()">Sign in</button>
+        <div class="loginErr" id="loginErr"></div>
+        <div class="loginFooter">
+          Victor's Smart Home Lab &nbsp;·&nbsp; ESP32 v2.1
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════ DASHBOARD ════════════ -->
+    <div id="dashboard">
+      <nav class="nav">
+        <div class="navLeft">
+          <div class="navBrand">Smart <span>PCMS</span></div>
+        </div>
+        <div class="navRight">
+          <div class="navGreet" id="navGreet"></div>
+          <div class="navClock" id="navClock">—</div>
+          <button
+            class="themeBtn"
+            onclick="toggleTheme()"
+            id="themeBtn"
+            title="Toggle theme"
+          >
+            🌙
+          </button>
+          <button class="logoutBtn" onclick="doLogout()">Log out</button>
+        </div>
+      </nav>
+
+      <div class="main">
+        <!-- Energy Stats -->
+        <div class="sec">Live readings</div>
+        <div class="statsGrid">
+          <div class="statCard">
+            <div class="statLabel">Voltage</div>
+            <div class="statValue" id="sv">225.0</div>
+            <div class="statUnit">Volts</div>
+            <div class="accent-bar"></div>
+          </div>
+          <div class="statCard">
+            <div class="statLabel">Current</div>
+            <div class="statValue" id="sc">1.40</div>
+            <div class="statUnit">Amperes</div>
+            <div class="accent-bar"></div>
+          </div>
+          <div class="statCard">
+            <div class="statLabel">Power</div>
+            <div class="statValue" id="sp">315</div>
+            <div class="statUnit">Watts</div>
+            <div class="accent-bar"></div>
+          </div>
+          <div class="statCard">
+            <div class="statLabel">Consumed</div>
+            <div class="statValue" id="se">0.012</div>
+            <div class="statUnit">kWh</div>
+            <div class="accent-bar"></div>
+          </div>
+        </div>
+
+        <!-- Power Chart -->
+        <div class="chartCard">
+          <div class="chartHead">
+            <div class="chartTitle">Power over time</div>
+            <div class="chartLegend">
+              <div class="legItem">
+                <div class="legDot" style="background: #f59e0b"></div>
+                Power (W)
+              </div>
+              <div class="legItem">
+                <div class="legDot" style="background: #60a5fa"></div>
+                Current (A×100)
+              </div>
+            </div>
+          </div>
+          <div class="chartWrap">
+            <canvas id="energyChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Load Controls -->
+        <div class="sec">Load controls</div>
+        <div class="loadGrid">
+          <div class="loadCard" id="lc25">
+            <div class="lc-top">
+              <div>
+                <div class="lc-icon">💡</div>
+                <div class="lc-name">Bulb 1</div>
+              </div>
+              <span class="lc-type ess">Essential</span>
+            </div>
+            <div>
+              <div class="lc-bottom">
+                <div class="lc-status">
+                  <span class="status-dot off" id="dot25"></span>
+                  <span class="status-label" id="lbl25">Off</span>
+                </div>
+                <label class="tgl">
+                  <input
+                    type="checkbox"
+                    id="tg25"
+                    onchange="setLoad(25, this.checked)"
+                  />
+                  <span class="tgl-track"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="loadCard" id="lc26">
+            <div class="lc-top">
+              <div>
+                <div class="lc-icon">💡</div>
+                <div class="lc-name">Bulb 2</div>
+              </div>
+              <span class="lc-type ess">Essential</span>
+            </div>
+            <div>
+              <div class="lc-bottom">
+                <div class="lc-status">
+                  <span class="status-dot off" id="dot26"></span>
+                  <span class="status-label" id="lbl26">Off</span>
+                </div>
+                <label class="tgl">
+                  <input
+                    type="checkbox"
+                    id="tg26"
+                    onchange="setLoad(26, this.checked)"
+                  />
+                  <span class="tgl-track"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="loadCard" id="lc27">
+            <div class="lc-top">
+              <div>
+                <div class="lc-icon">🔌</div>
+                <div class="lc-name">Socket 1</div>
+              </div>
+              <span class="lc-type ne">Non-essential</span>
+            </div>
+            <div>
+              <div class="lc-bottom">
+                <div class="lc-status">
+                  <span class="status-dot off" id="dot27"></span>
+                  <span class="status-label" id="lbl27">Off</span>
+                </div>
+                <label class="tgl">
+                  <input
+                    type="checkbox"
+                    id="tg27"
+                    onchange="setLoad(27, this.checked)"
+                  />
+                  <span class="tgl-track"></span>
+                </label>
+              </div>
+              <div class="lc-locked" id="lock27" style="display: none">
+                ⏱ Scheduled off — resumes at 6:00 AM
+              </div>
+            </div>
+          </div>
+
+          <div class="loadCard" id="lc14">
+            <div class="lc-top">
+              <div>
+                <div class="lc-icon">🔌</div>
+                <div class="lc-name">Socket 2</div>
+              </div>
+              <span class="lc-type ne">Non-essential</span>
+            </div>
+            <div>
+              <div class="lc-bottom">
+                <div class="lc-status">
+                  <span class="status-dot off" id="dot14"></span>
+                  <span class="status-label" id="lbl14">Off</span>
+                </div>
+                <label class="tgl">
+                  <input
+                    type="checkbox"
+                    id="tg14"
+                    onchange="setLoad(14, this.checked)"
+                  />
+                  <span class="tgl-track"></span>
+                </label>
+              </div>
+              <div class="lc-locked" id="lock14" style="display: none">
+                ⏱ Scheduled off — resumes at 6:00 AM
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scheduler -->
+        <div class="sec">Auto schedule</div>
+        <div class="schedCard">
+          <div class="schedTop">
+            <div class="schedInfo">
+              <h3>Night-time shutoff</h3>
+              <p>
+                Non-essential sockets automatically switch off at midnight and
+                come back on at 6:00 AM.
+              </p>
+            </div>
+            <label class="tgl" style="margin-top: 2px">
+              <input
+                type="checkbox"
+                id="schedOn"
+                checked
+                onchange="updateScheduleUI()"
+              />
+              <span class="tgl-track"></span>
+            </label>
+          </div>
+
+          <div class="schedBands">
+            <div class="schedBand b-ess">
+              <strong>Essential — always on</strong>
+              <span
+                >Bulb 1 and Bulb 2 are never affected by the schedule. You can
+                still control them manually at any time.</span
+              >
+            </div>
+            <div class="schedBand b-ne">
+              <strong>Non-essential — scheduled</strong>
+              <span
+                >Socket 1 and Socket 2 switch off from 12:00 AM to 6:00 AM when
+                the schedule is active.</span
+              >
+            </div>
+          </div>
+
+          <div class="schedStatus">
+            <div class="sched-led standby" id="schedLed"></div>
+            <span id="schedStatusText"
+              >Schedule enabled — not in active window</span
+            >
+          </div>
+        </div>
+
+        <div class="footer">
+          Victor's Smart PCMS &nbsp;·&nbsp; ESP32 Hotspot &nbsp;·&nbsp; All
+          systems running
+        </div>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
