@@ -1,16 +1,25 @@
 /* ─── THEME ───────────────────────────────────────── */
 function toggleTheme() {
-  const isLight = document.body.classList.toggle("light");
-  document.getElementById("themeBtn").textContent = isLight ? "☀️" : "🌙";
-  localStorage.setItem("pcms-theme", isLight ? "light" : "dark");
+  const isDark = document.body.classList.toggle("dark");
+  document.documentElement.classList.toggle("dark", isDark);
+  document.getElementById("themeBtn").textContent = isDark ? "☀️" : "🌙";
+  localStorage.setItem("pcms-theme", isDark ? "dark" : "light");
 }
 
 function applyStoredTheme() {
-  if (localStorage.getItem("pcms-theme") === "light") {
-    document.body.classList.add("light");
+  const isDark = localStorage.getItem("pcms-theme") === "dark";
+  if (isDark) {
+    document.body.classList.add("dark");
+    // html class already set by inline script in <head>
     const btn = document.getElementById("themeBtn");
     if (btn) btn.textContent = "☀️";
   }
+  // Enable transitions after theme is applied — prevents flash on load
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      document.body.classList.add("theme-ready");
+    });
+  });
 }
 
 /* ─── TOAST ───────────────────────────────────────── */
@@ -29,8 +38,11 @@ function doLogin() {
   const p = document.getElementById("pword").value;
   const err = document.getElementById("loginErr");
   if (u === "PCMS" && p === "12345678") {
+    sessionStorage.setItem("pcms-auth", "1");
     document.getElementById("loginPage").style.display = "none";
-    document.getElementById("dashboard").style.display = "block";
+    const dash = document.getElementById("dashboard");
+    dash.style.display = "block";
+    triggerDashboardAnimation(dash);
     startDashboard();
   } else {
     err.textContent = "Incorrect username or password. Please try again.";
@@ -40,10 +52,33 @@ function doLogin() {
 }
 
 function doLogout() {
+  sessionStorage.removeItem("pcms-auth");
   document.getElementById("dashboard").style.display = "none";
   document.getElementById("loginPage").style.display = "flex";
   document.getElementById("uname").value = "";
   document.getElementById("pword").value = "";
+}
+
+function checkSession() {
+  if (sessionStorage.getItem("pcms-auth") === "1") {
+    document.getElementById("loginPage").style.display = "none";
+    const dash = document.getElementById("dashboard");
+    dash.style.display = "block";
+    triggerDashboardAnimation(dash);
+    startDashboard();
+  }
+}
+
+function triggerDashboardAnimation(dash) {
+  // Force reflow to restart CSS animations
+  const animated = dash.querySelectorAll(
+    ".nav, .statsGrid, .chartCard, .loadGrid, .schedCard, .footer, .sec",
+  );
+  animated.forEach((el) => {
+    el.style.animation = "none";
+    void el.offsetWidth; // reflow
+    el.style.animation = "";
+  });
 }
 
 document.addEventListener("keydown", (e) => {
@@ -292,3 +327,4 @@ function startDashboard() {
 }
 
 applyStoredTheme();
+checkSession();
