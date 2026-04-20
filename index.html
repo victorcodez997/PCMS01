@@ -13,6 +13,11 @@
     />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <link rel="stylesheet" href="styles.css" />
+    <!-- Apply dark class before first paint to prevent flash -->
+    <script>
+      if (localStorage.getItem("pcms-theme") === "dark")
+        document.documentElement.classList.add("dark");
+    </script>
   </head>
   <body>
     <!-- TOAST -->
