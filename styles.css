@@ -6,13 +6,14 @@
   box-sizing: border-box;
 }
 
+/* ─── DEFAULT: LIGHT MODE ───────────────────────── */
 :root {
-  --bg: #0c1018;
-  --bg2: #111827;
-  --card: #131c2e;
-  --card2: #192236;
-  --border: rgba(255, 255, 255, 0.07);
-  --border2: rgba(255, 255, 255, 0.12);
+  --bg: #f0f4f8;
+  --bg2: #e2e8f0;
+  --card: #ffffff;
+  --card2: #f8fafc;
+  --border: rgba(0, 0, 0, 0.08);
+  --border2: rgba(0, 0, 0, 0.14);
   --amber: #f59e0b;
   --amber-dim: rgba(245, 158, 11, 0.15);
   --green: #22c55e;
@@ -22,42 +23,58 @@
   --blue: #60a5fa;
   --blue-dim: rgba(96, 165, 250, 0.12);
   --purple: #a78bfa;
-  --text: #e2e8f0;
-  --muted: #64748b;
-  --muted2: #334155;
-}
-
-/* ─── LIGHT MODE OVERRIDES ──────────────────────── */
-body.light {
-  --bg: #f0f4f8;
-  --bg2: #e2e8f0;
-  --card: #ffffff;
-  --card2: #f8fafc;
-  --border: rgba(0, 0, 0, 0.08);
-  --border2: rgba(0, 0, 0, 0.14);
   --text: #0f172a;
   --muted: #64748b;
   --muted2: #94a3b8;
 }
 
-body.light .nav {
+/* ─── DARK MODE OVERRIDES ───────────────────────── */
+html.dark body,
+body.dark {
+  --bg: #0c1018;
+  --bg2: #111827;
+  --card: #131c2e;
+  --card2: #192236;
+  --border: rgba(255, 255, 255, 0.07);
+  --border2: rgba(255, 255, 255, 0.12);
+  --text: #e2e8f0;
+  --muted: #64748b;
+  --muted2: #334155;
+}
+
+html.dark .nav,
+body.dark .nav {
+  background: rgba(12, 16, 24, 0.9);
+}
+
+html.dark .loginCard,
+body.dark .loginCard {
+  background: rgba(19, 28, 46, 0.85);
+}
+
+html.dark .field input,
+body.dark .field input {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+html.dark .schedStatus,
+body.dark .schedStatus {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.nav {
   background: rgba(240, 244, 248, 0.92);
 }
 
-body.light .loginCard {
+.loginCard {
   background: rgba(255, 255, 255, 0.92);
 }
 
-body.light #loginPage {
-  background: var(--bg);
-}
-
-body.light .field input {
+.field input {
   background: rgba(0, 0, 0, 0.04);
-  color: var(--text);
 }
 
-body.light .schedStatus {
+.schedStatus {
   background: rgba(0, 0, 0, 0.02);
 }
 
@@ -81,18 +98,14 @@ body.light .schedStatus {
   background: var(--amber-dim);
 }
 
-/* smooth theme transition */
-body {
-  transition:
-    background 0.3s,
-    color 0.3s;
-}
-.nav,
-.statCard,
-.chartCard,
-.loadCard,
-.schedCard,
-.loginCard {
+/* smooth theme transition — disabled on initial load, enabled by JS */
+body.theme-ready,
+body.theme-ready .nav,
+body.theme-ready .statCard,
+body.theme-ready .chartCard,
+body.theme-ready .loadCard,
+body.theme-ready .schedCard,
+body.theme-ready .loginCard {
   transition:
     background 0.3s,
     border-color 0.3s,
@@ -205,7 +218,7 @@ body {
 .loginCard {
   position: relative;
   z-index: 2;
-  background: rgba(19, 28, 46, 0.85);
+  background: rgba(255, 255, 255, 0.92);
   border: 1px solid var(--border2);
   border-radius: 24px;
   padding: 44px 40px;
@@ -317,7 +330,7 @@ body {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(12, 16, 24, 0.9);
+  background: rgba(240, 244, 248, 0.92);
   border-bottom: 1px solid var(--border);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -748,4 +761,53 @@ body {
   color: var(--muted2);
   letter-spacing: 0.5px;
   border-top: 1px solid var(--border);
+}
+
+/* ─── PAGE LOAD ANIMATION ───────────────────────── */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Login page fades in */
+#loginPage {
+  animation: fadeIn 0.4s ease both;
+}
+
+/* Dashboard sections stagger in */
+#dashboard .nav {
+  animation: fadeIn 0.35s ease both;
+}
+#dashboard .statsGrid {
+  animation: fadeUp 0.4s ease 0.05s both;
+}
+#dashboard .chartCard {
+  animation: fadeUp 0.4s ease 0.1s both;
+}
+#dashboard .loadGrid {
+  animation: fadeUp 0.4s ease 0.15s both;
+}
+#dashboard .schedCard {
+  animation: fadeUp 0.4s ease 0.2s both;
+}
+#dashboard .footer {
+  animation: fadeUp 0.4s ease 0.25s both;
+}
+#dashboard .sec {
+  animation: fadeIn 0.4s ease 0.05s both;
 }
